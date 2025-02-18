@@ -11,7 +11,8 @@ struct ArtworkView: View {
     // ContentViewModel을 관찰합니다.
     @StateObject var viewModel = ContentViewModel.shared
     @State private var overlayColor: Color = .clear
-    
+    @State private var lastDragLocation: CGPoint = .zero
+
     // viewModel의 selectedArtwork 값을 활용하여 이미지 로딩
     var artworkImage: UIImage {
         if let artwork = viewModel.selectedArtwork,
@@ -39,7 +40,7 @@ struct ArtworkView: View {
                     .opacity(0.9)
                     .animation(.easeInOut(duration: 1.0), value: overlayColor)
                 
-                // 왼쪽 위에 selectionView로 돌아가는 버튼 추가
+                // 왼쪽 위에 ArtworkSelectionView로 돌아가는 버튼 추가
                 Button(action: {
                     viewModel.appState = .artworkSelection
                 }) {
@@ -53,20 +54,29 @@ struct ArtworkView: View {
                 .padding(.top, 20)
                 .padding(.leading, 20)
             }
+            // 터치 영역을 Rectangle로 설정
             .contentShape(Rectangle())
+            // 드래그 제스처를 통해 터치 위치와 색상을 업데이트
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                     .onChanged { value in
-                        let tapLocation = value.location
+                        lastDragLocation = value.location
                         if let color = getPixelColor(
                             image: artworkImage,
-                            point: tapLocation,
+                            point: value.location,
                             viewSize: geo.size
                         ) {
                             overlayColor = color
                         }
                     }
                     .onEnded { _ in }
+            )
+            // 더블 탭 제스처를 동시에 감지하여 마지막 드래그된 좌표를 출력합니다.
+            .simultaneousGesture(
+                TapGesture(count: 2)
+                    .onEnded {
+                        print("Double tapped at last drag location: \(lastDragLocation)")
+                    }
             )
         }
     }
