@@ -26,25 +26,31 @@ struct ArtworkSelectionView: View {
     ]
     
     var body: some View {
-        VStack(alignment: .leading) {
-            // 상단 타이틀
+        VStack(spacing: 20) {
+            // 상단 타이틀 (가운데 정렬)
             Text("Select an Artwork")
                 .font(.largeTitle)
                 .bold()
-                .padding([.top, .horizontal])
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+                .padding(.top)
+                .padding(.horizontal)
             
-            // GeometryReader를 사용하여 화면 크기에 따라 카드 크기를 동적으로 조정합니다.
+            // GeometryReader로 화면 크기에 따라 카드 크기를 동적으로 조정
             GeometryReader { geo in
+                // 카드 크기를 화면 크기의 비율에 맞춰 계산
                 let cardWidth = geo.size.width * 0.3
                 let cardHeight = geo.size.height * 0.8
+                
                 ScrollView(.horizontal, showsIndicators: true) {
-                    HStack(spacing: 16) {
+                    HStack(spacing: 20) {
                         ForEach(artworks) { artwork in
                             Button(action: {
                                 viewModel.selectedArtwork = artwork
                                 viewModel.appState = .artwork
                             }) {
-                                VStack(spacing: 0) {
+                                VStack(spacing: 8) {
+                                    // 작품 이미지
                                     Image(artwork.imageName)
                                         .resizable()
                                         .scaledToFill()
@@ -52,27 +58,32 @@ struct ArtworkSelectionView: View {
                                         .clipped()
                                         .cornerRadius(8)
                                     
-                                    VStack(alignment: .leading, spacing: 4) {
+                                    // 작품 제목과 작가 정보 (가운데 정렬)
+                                    VStack(spacing: 4) {
                                         Text(artwork.title)
-                                            .font(.headline)
+                                            .font(.system(size: cardWidth * 0.09, weight: .semibold))
+                                            .multilineTextAlignment(.center)
                                         Text(artwork.artist)
-                                            .font(.subheadline)
+                                            .font(.system(size: cardWidth * 0.07))
                                             .foregroundColor(.secondary)
+                                            .multilineTextAlignment(.center)
                                     }
-                                    .padding()
+                                    .padding(.horizontal)
                                 }
                                 .frame(width: cardWidth, height: cardHeight)
                                 .background(Color(.systemGray6))
                                 .cornerRadius(10)
                                 .shadow(radius: 5)
                             }
-                            // 보이스오버 접근성 설정
+                            // 접근성 설정
                             .accessibilityElement(children: .combine)
                             .accessibilityLabel("\(artwork.title) by \(artwork.artist)")
                             .accessibilityHint("Double tap to select this artwork")
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    // 카드가 화면 중앙에 위치하도록 frame 설정
+                    .frame(minWidth: geo.size.width, alignment: .center)
                 }
             }
         }
