@@ -37,6 +37,7 @@ struct ArtworkView: View {
                 Rectangle()
                     .fill(overlayColor)
                     .opacity(0.9)
+                    .animation(.easeInOut(duration: 1.0), value: overlayColor)
                 
                 // 왼쪽 위에 selectionView로 돌아가는 버튼 추가
                 Button(action: {
