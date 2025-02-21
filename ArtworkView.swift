@@ -14,9 +14,11 @@ struct ArtworkView: View {
     
     @State private var overlayColor: Color = .clear
     @State private var lastDragLocation: CGPoint = .zero
-
+    
     private let synthesizer = AVSpeechSynthesizer()
     
+    @State private var displayedSubtitle: String?
+
     var artworkImage: UIImage {
         if let artwork = artworkManager.selectedArtwork,
            let image = UIImage(named: artwork.imageName) {
@@ -45,9 +47,9 @@ struct ArtworkView: View {
                 
                 Button(action: {
                     speak("You pressed the back button. Returning to the artwork selection.")
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 4, execute: {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
                         contentViewModel.appState = .artworkSelection
-                    })
+                    }
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.title)
@@ -59,6 +61,18 @@ struct ArtworkView: View {
                 .padding(.top, 20)
                 .padding(.leading, 20)
                 .accessibilityLabel("Return to the artwork selection")
+                
+                if let subtitle = displayedSubtitle {
+                    Text(subtitle)
+                        .font(.title3)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.7))
+                        .cornerRadius(10)
+                        .zIndex(1)
+                        .position(x: geo.size.width / 2, y: geo.size.height * 0.1 + 30)
+                        .transition(.opacity)
+                }
             }
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
@@ -178,19 +192,19 @@ struct ArtworkView: View {
         let xPercent = (adjustedX / displayWidth) * 100
         let yPercent = (adjustedY / displayHeight) * 100
         
-        print("이미지 내부입니다. x: \(String(format: "%.1f", xPercent))%, y: \(String(format: "%.1f", yPercent))%")
-        
         guard let selectedArtwork = artworkManager.selectedArtwork else { return }
         
         for area in selectedArtwork.areas {
             if area.xRange.contains(xPercent) && area.yRange.contains(yPercent) {
                 speak(area.description)
-                break
+                return
             }
         }
     }
     
     private func speak(_ text: String) {
+        displayedSubtitle = text
+        
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
@@ -198,5 +212,13 @@ struct ArtworkView: View {
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         synthesizer.speak(utterance)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
+            if displayedSubtitle == text {
+                withAnimation {
+                    displayedSubtitle = nil
+                }
+            }
+        }
     }
 }
