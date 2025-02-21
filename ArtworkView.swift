@@ -19,8 +19,7 @@ struct ArtworkView: View {
            let image = UIImage(named: artwork.imageName) {
             return image
         } else {
-            // 기본 이미지: selectedArtwork가 nil이면 기본값으로 "PoppyField"를 사용합니다.
-            return UIImage(named: "PoppyField") ?? UIImage()
+            return UIImage()
         }
     }
     
@@ -61,6 +60,7 @@ struct ArtworkView: View {
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                     .onChanged { value in
                         lastDragLocation = value.location
+                        
                         if let color = getPixelColor(
                             image: artworkImage,
                             point: value.location,
@@ -75,7 +75,7 @@ struct ArtworkView: View {
             .simultaneousGesture(
                 TapGesture(count: 2)
                     .onEnded {
-                        print("Double tapped at last drag location: \(lastDragLocation)")
+                        getArtworkDescription(image: artworkImage, point: lastDragLocation, viewSize: geo.size)
                     }
             )
         }
@@ -140,5 +140,46 @@ struct ArtworkView: View {
         let alpha = CGFloat(data?[offset + 3] ?? 0) / 255.0
         
         return Color(red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
+    }
+    
+    private func getArtworkDescription(image: UIImage, point: CGPoint, viewSize: CGSize) {
+        guard let cgImage = image.cgImage else { return }
+        
+        let imageWidth = CGFloat(cgImage.width)
+        let imageHeight = CGFloat(cgImage.height)
+        
+        let imageAspect = imageWidth / imageHeight
+        let viewAspect = viewSize.width / viewSize.height
+        
+        var displayWidth: CGFloat = 0
+        var displayHeight: CGFloat = 0
+        var offsetX: CGFloat = 0
+        var offsetY: CGFloat = 0
+        
+        if imageAspect > viewAspect {
+            // 폭을 뷰에 맞춤
+            displayWidth = viewSize.width
+            displayHeight = viewSize.width / imageAspect
+            offsetY = (viewSize.height - displayHeight) / 2
+        } else {
+            // 높이를 뷰에 맞춤
+            displayHeight = viewSize.height
+            displayWidth = viewSize.height * imageAspect
+            offsetX = (viewSize.width - displayWidth) / 2
+        }
+        
+        // 드래그 위치를 이미지 내부 좌표로 변환
+        let adjustedX = point.x - offsetX
+        let adjustedY = point.y - offsetY
+        
+        // 이미지 내부/외부 판별 & 퍼센트 계산
+        if adjustedX < 0 || adjustedX > displayWidth
+            || adjustedY < 0 || adjustedY > displayHeight {
+            print("이미지 영역 밖입니다.")
+        } else {
+            let xPercent = (adjustedX / displayWidth) * 100
+            let yPercent = (adjustedY / displayHeight) * 100
+            print("이미지 내부입니다. x: \(String(format: "%.1f", xPercent))%, y: \(String(format: "%.1f", yPercent))%")
+        }
     }
 }
