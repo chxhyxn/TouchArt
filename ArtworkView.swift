@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct ArtworkView: View {
     @StateObject var contentViewModel = ContentViewModel.shared
@@ -14,6 +15,8 @@ struct ArtworkView: View {
     @State private var overlayColor: Color = .clear
     @State private var lastDragLocation: CGPoint = .zero
 
+    private let synthesizer = AVSpeechSynthesizer()
+    
     var artworkImage: UIImage {
         if let artwork = artworkManager.selectedArtwork,
            let image = UIImage(named: artwork.imageName) {
@@ -46,7 +49,7 @@ struct ArtworkView: View {
                         .padding()
                         .background(Color.black.opacity(0.5))
                         .foregroundColor(.white)
-                        .clipShape(Circle())
+//                        .clipShape(Circle())
                 }
                 .padding(.top, 20)
                 .padding(.leading, 20)
@@ -162,7 +165,10 @@ struct ArtworkView: View {
         
         guard adjustedX >= 0, adjustedX <= displayWidth,
               adjustedY >= 0, adjustedY <= displayHeight else {
-            print("이미지 영역 밖입니다.")
+            if synthesizer.isSpeaking {
+                synthesizer.stopSpeaking(at: .immediate)
+            }
+            speak("You’re outside the image area., To return to the artwork selection, tap the top-left corner of the display.")
             return
         }
         
@@ -175,9 +181,18 @@ struct ArtworkView: View {
         
         for area in selectedArtwork.areas {
             if area.xRange.contains(xPercent) && area.yRange.contains(yPercent) {
-                print(area.description)
+                if synthesizer.isSpeaking {
+                    synthesizer.stopSpeaking(at: .immediate)
+                }
+                speak(area.description)
                 break
             }
         }
+    }
+    
+    private func speak(_ text: String) {
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        synthesizer.speak(utterance)
     }
 }
