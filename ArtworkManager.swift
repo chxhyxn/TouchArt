@@ -113,7 +113,7 @@ class ArtworkManager: ObservableObject {
                 ArtworkArea(
                     id: 5,
                     xRange: 0...100,
-                    yRange: 29...52,
+                    yRange: 40...52,
                     description: "A horizontal line of green trees with soft gradations of light and shade separates the sky from the field above and below."
                 ),
                 ArtworkArea(

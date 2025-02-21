@@ -44,7 +44,10 @@ struct ArtworkView: View {
                     .animation(.easeInOut(duration: 1.0), value: overlayColor)
                 
                 Button(action: {
-                    contentViewModel.appState = .artworkSelection
+                    speak("You pressed the back button. Returning to the artwork selection.")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 4, execute: {
+                        contentViewModel.appState = .artworkSelection
+                    })
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.title)
@@ -168,9 +171,6 @@ struct ArtworkView: View {
         
         guard adjustedX >= 0, adjustedX <= displayWidth,
               adjustedY >= 0, adjustedY <= displayHeight else {
-            if synthesizer.isSpeaking {
-                synthesizer.stopSpeaking(at: .immediate)
-            }
             speak("You’re outside the image area.")
             return
         }
@@ -184,9 +184,6 @@ struct ArtworkView: View {
         
         for area in selectedArtwork.areas {
             if area.xRange.contains(xPercent) && area.yRange.contains(yPercent) {
-                if synthesizer.isSpeaking {
-                    synthesizer.stopSpeaking(at: .immediate)
-                }
                 speak(area.description)
                 break
             }
@@ -194,6 +191,10 @@ struct ArtworkView: View {
     }
     
     private func speak(_ text: String) {
+        if synthesizer.isSpeaking {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
+        
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         synthesizer.speak(utterance)
