@@ -35,7 +35,9 @@ struct ArtworkView: View {
                     .frame(width: geo.size.width,
                            height: geo.size.height)
                     .clipped()
-                
+                    .accessibilityLabel("\(artworkManager.selectedArtwork?.title ?? "")")
+                    .accessibilityHint("Please turn off VoiceOver temporarily to use TouchArt’s features.")
+
                 Rectangle()
                     .fill(overlayColor)
                     .opacity(0.9)
@@ -49,10 +51,11 @@ struct ArtworkView: View {
                         .padding()
                         .background(Color.black.opacity(0.5))
                         .foregroundColor(.white)
-//                        .clipShape(Circle())
+                        .clipShape(Circle())
                 }
                 .padding(.top, 20)
                 .padding(.leading, 20)
+                .accessibilityLabel("Return to the artwork selection")
             }
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
@@ -109,7 +112,7 @@ struct ArtworkView: View {
         
         guard adjustedX >= 0, adjustedX <= displayWidth,
               adjustedY >= 0, adjustedY <= displayHeight else {
-            return nil
+            return .clear
         }
         
         let xScale = imageWidth / displayWidth
@@ -120,7 +123,7 @@ struct ArtworkView: View {
         
         guard imgX >= 0, imgX < Int(imageWidth),
               imgY >= 0, imgY < Int(imageHeight) else {
-            return nil
+            return .clear
         }
         
         guard let pixelData = cgImage.dataProvider?.data else { return nil }
@@ -168,7 +171,7 @@ struct ArtworkView: View {
             if synthesizer.isSpeaking {
                 synthesizer.stopSpeaking(at: .immediate)
             }
-            speak("You’re outside the image area., To return to the artwork selection, tap the top-left corner of the display.")
+            speak("You’re outside the image area.")
             return
         }
         

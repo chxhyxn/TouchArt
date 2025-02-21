@@ -36,7 +36,6 @@ struct ArtworkSelectionView: View {
                                 contentViewModel.appState = .artwork
                             }) {
                                 VStack(spacing: 8) {
-                                    // 작품 이미지
                                     Image(artwork.imageName)
                                         .resizable()
                                         .scaledToFill()
@@ -44,12 +43,20 @@ struct ArtworkSelectionView: View {
                                         .clipped()
                                         .cornerRadius(8)
                                     
-                                    // 작품 제목과 작가 정보 (가운데 정렬)
                                     VStack(spacing: 4) {
                                         Text(artwork.title)
                                             .font(.system(size: cardWidth * 0.09, weight: .semibold))
                                             .multilineTextAlignment(.center)
                                         Text(artwork.artist)
+                                            .font(.system(size: cardWidth * 0.07))
+                                            .foregroundColor(.secondary)
+                                            .multilineTextAlignment(.center)
+                                        Text("Year: \(artwork.year)")
+                                            .font(.system(size: cardWidth * 0.07))
+                                            .foregroundColor(.secondary)
+                                            .multilineTextAlignment(.center)
+
+                                        Text("Key Colors: \(artwork.keyColors)")
                                             .font(.system(size: cardWidth * 0.07))
                                             .foregroundColor(.secondary)
                                             .multilineTextAlignment(.center)
@@ -61,10 +68,9 @@ struct ArtworkSelectionView: View {
                                 .cornerRadius(10)
                                 .shadow(radius: 5)
                             }
-                            // 접근성 설정
                             .accessibilityElement(children: .combine)
-                            .accessibilityLabel("\(artwork.title) by \(artwork.artist)")
-                            .accessibilityHint("Double tap to select this artwork")
+                            .accessibilityLabel("Select \(artwork.title) by \(artwork.artist), \(artwork.year) year, key colors are \(artwork.keyColors)")
+                            .accessibilityHint("Double tap to select this artwork.")
                         }
                     }
                     .padding(.horizontal)
