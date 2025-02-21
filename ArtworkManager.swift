@@ -20,7 +20,6 @@ class ArtworkManager: ObservableObject {
             artist: "Vincent van Gogh",
             keyColors: "Yellow and Blue",
             imageName: "StarryNight",
-            background: "'Starry Night' was completed while Vincent van Gogh was staying at the Saint-Paul-de-Mausole asylum in Saint-Rémy-de-Provence. Although it was based on the view outside his window, the artist’s imagination was woven into the real scenery, creating a distinctive atmosphere. Van Gogh’s characteristic bold brushstrokes and vivid colors bring a sense of movement and energy that resonates throughout the entire painting.",
             areas: [
                 ArtworkArea(
                     id: 1,
@@ -84,7 +83,6 @@ class ArtworkManager: ObservableObject {
             artist: "Claude Monet",
             keyColors: "Red and Green",
             imageName: "PoppyField",
-            background: "When Claude Monet finished this painting in 1873, he was 33 years old and living in Argenteuil. It is said that he used his wife Camille and their son Jean as models. Through this work, you can experience the relaxed French countryside in the late 19th century: a sunlit, peaceful field and figures strolling at a leisurely pace.",
             areas: [
                 ArtworkArea(
                     id: 1,
@@ -148,7 +146,6 @@ struct ArtworkItem: Identifiable {
     let artist: String
     let keyColors: String
     let imageName: String
-    let background: String
     let areas: [ArtworkArea]
 }
 

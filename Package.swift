@@ -31,7 +31,8 @@ let package = Package(
                 .landscapeRight,
                 .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
-            ]
+            ],
+            appCategory: .entertainment
         )
     ],
     targets: [
@@ -39,6 +40,5 @@ let package = Package(
             name: "AppModule",
             path: "."
         )
-    ],
-    swiftLanguageVersions: [.version("6")]
+    ]
 )
