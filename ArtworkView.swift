@@ -35,7 +35,7 @@ struct ArtworkView: View {
                 
                 Rectangle()
                     .fill(overlayColor)
-                    .opacity(0.9)
+                    .opacity(0.1)
                     .animation(.easeInOut(duration: 1.0), value: overlayColor)
                 
                 Button(action: {
@@ -51,7 +51,6 @@ struct ArtworkView: View {
                 .padding(.top, 20)
                 .padding(.leading, 20)
             }
-            .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                     .onChanged { value in
