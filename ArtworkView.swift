@@ -35,7 +35,7 @@ struct ArtworkView: View {
                 
                 Rectangle()
                     .fill(overlayColor)
-                    .opacity(0.1)
+                    .opacity(0.9)
                     .animation(.easeInOut(duration: 1.0), value: overlayColor)
                 
                 Button(action: {
