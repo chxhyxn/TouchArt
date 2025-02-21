@@ -10,10 +10,11 @@ import SwiftUI
 struct TutorialView: View {
     private let messages = [
         "Welcome!",
-        "TouchArt is a masterpiece viewing app designed for visually impaired users.",
+        "TouchArt is a masterpiece-viewing app designed for people with visual impairments.",
         "When you touch a painting, the vibrant colors of the artwork will fill your screen.",
         "Gently move your finger to experience the subtle shifts in color.",
         "If you need further explanation, double-tap on that area to receive a voice guide with voice-over.",
+        "Please adjust your device’s volume to a comfortable level so you can hear the voice guide clearly.",
         "Now, select the masterpiece you wish to enjoy and immerse yourself in the world of art."
     ]
     
