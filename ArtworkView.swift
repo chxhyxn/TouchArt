@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct ArtworkView: View {
-    @StateObject var viewModel = ContentViewModel.shared
+    @StateObject var contentViewModel = ContentViewModel.shared
+    @StateObject var artworkManager = ArtworkManager.shared
+    
     @State private var overlayColor: Color = .clear
     @State private var lastDragLocation: CGPoint = .zero
 
     var artworkImage: UIImage {
-        if let artwork = viewModel.selectedArtwork,
+        if let artwork = artworkManager.selectedArtwork,
            let image = UIImage(named: artwork.imageName) {
             return image
         } else {
@@ -37,7 +39,7 @@ struct ArtworkView: View {
                     .animation(.easeInOut(duration: 1.0), value: overlayColor)
                 
                 Button(action: {
-                    viewModel.appState = .artworkSelection
+                    contentViewModel.appState = .artworkSelection
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.title)
@@ -68,7 +70,9 @@ struct ArtworkView: View {
             .simultaneousGesture(
                 TapGesture(count: 2)
                     .onEnded {
-                        getArtworkDescription(image: artworkImage, point: lastDragLocation, viewSize: geo.size)
+                        getArtworkDescription(image: artworkImage,
+                                              point: lastDragLocation,
+                                              viewSize: geo.size)
                     }
             )
         }
@@ -157,13 +161,24 @@ struct ArtworkView: View {
         let adjustedX = point.x - offsetX
         let adjustedY = point.y - offsetY
         
-        if adjustedX < 0 || adjustedX > displayWidth
-            || adjustedY < 0 || adjustedY > displayHeight {
+        guard adjustedX >= 0, adjustedX <= displayWidth,
+              adjustedY >= 0, adjustedY <= displayHeight else {
             print("이미지 영역 밖입니다.")
-        } else {
-            let xPercent = (adjustedX / displayWidth) * 100
-            let yPercent = (adjustedY / displayHeight) * 100
-            print("이미지 내부입니다. x: \(String(format: "%.1f", xPercent))%, y: \(String(format: "%.1f", yPercent))%")
+            return
+        }
+        
+        let xPercent = (adjustedX / displayWidth) * 100
+        let yPercent = (adjustedY / displayHeight) * 100
+        
+        print("이미지 내부입니다. x: \(String(format: "%.1f", xPercent))%, y: \(String(format: "%.1f", yPercent))%")
+        
+        guard let selectedArtwork = artworkManager.selectedArtwork else { return }
+        
+        for area in selectedArtwork.areas {
+            if area.xRange.contains(xPercent) && area.yRange.contains(yPercent) {
+                print(area.description)
+                break
+            }
         }
     }
 }

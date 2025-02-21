@@ -7,19 +7,17 @@
 
 import SwiftUI
 
-
-enum AppState {
-    case tutorial
-    case artworkSelection
-    case artwork
-}
-
 @MainActor
 class ContentViewModel: ObservableObject {
     static let shared = ContentViewModel()
     
     @Published var appState: AppState = .tutorial
-    @Published var selectedArtwork: ArtworkItem? = nil
     
     private init() {}
+}
+
+enum AppState {
+    case tutorial
+    case artworkSelection
+    case artwork
 }

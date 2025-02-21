@@ -7,24 +7,10 @@
 
 import SwiftUI
 
-// Artwork 정보를 담는 모델
-struct ArtworkItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let artist: String
-    let imageName: String
-}
-
 struct ArtworkSelectionView: View {
-    @StateObject var viewModel = ContentViewModel.shared
-    
-    // 예시 데이터 (이미지 에셋 이름이 일치해야 합니다)
-    let artworks: [ArtworkItem] = [
-        ArtworkItem(title: "Starry Night", artist: "Vincent van Gogh", imageName: "StarryNight"),
-        ArtworkItem(title: "PoppyField", artist: "Monet", imageName: "PoppyField"),
-        ArtworkItem(title: "The Scream", artist: "Edvard Munch", imageName: "StarryNight")
-    ]
-    
+    @StateObject var contentViewModel = ContentViewModel.shared
+    @StateObject var artworkManager = ArtworkManager.shared
+        
     var body: some View {
         VStack(spacing: 20) {
             // 상단 타이틀 (가운데 정렬)
@@ -44,10 +30,10 @@ struct ArtworkSelectionView: View {
                 
                 ScrollView(.horizontal, showsIndicators: true) {
                     HStack(spacing: 20) {
-                        ForEach(artworks) { artwork in
+                        ForEach(artworkManager.artworks) { artwork in
                             Button(action: {
-                                viewModel.selectedArtwork = artwork
-                                viewModel.appState = .artwork
+                                artworkManager.selectedArtwork = artwork
+                                contentViewModel.appState = .artwork
                             }) {
                                 VStack(spacing: 8) {
                                     // 작품 이미지
