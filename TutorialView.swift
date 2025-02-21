@@ -9,9 +9,12 @@ import SwiftUI
 
 struct TutorialView: View {
     private let messages = [
-        "첫 번째 감성 메시지",
-        "두 번째 감성 메시지",
-        "세 번째 감성 메시지"
+        "Welcome!",
+        "TouchArt is a masterpiece viewing app designed for visually impaired users.",
+        "When you touch a painting, the vibrant colors of the artwork will fill your screen.",
+        "Gently move your finger to experience the subtle shifts in color.",
+        "If you need further explanation, double-tap on that area to receive a voice guide.",
+        "Now, select the masterpiece you wish to enjoy and immerse yourself in the world of art."
     ]
     
     @State private var currentIndex: Int = 0
